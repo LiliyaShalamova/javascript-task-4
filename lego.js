@@ -11,7 +11,7 @@ var PRIORITIES_OF_FUNCTIONS = {
     'sortBy': 2,
     'select': 3,
     'format': 4,
-    'limit': 4
+    'limit': 5
 };
 
 /**
@@ -105,10 +105,10 @@ exports.sortBy = function (property, order) {
     return function sortBy(collection) {
         return collection.sort(function (person1, person2) {
             if (order === 'asc') {
-                return person1[property] >= person2[property] ? 1 : -1;
+                return person1[property] <= person2[property] ? -1 : 1;
             }
 
-            return person2[property] >= person1[property] ? 1 : -1;
+            return person1[property] <= person2[property] ? 1: -1;
         });
     };
 };
