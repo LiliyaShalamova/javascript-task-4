@@ -108,7 +108,7 @@ exports.sortBy = function (property, order) {
                 return person1[property] <= person2[property] ? -1 : 1;
             }
 
-            return person1[property] <= person2[property] ? 1: -1;
+            return person1[property] <= person2[property] ? 1 : -1;
         });
     };
 };
