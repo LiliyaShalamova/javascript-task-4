@@ -13,6 +13,7 @@ var PRIORITIES_OF_FUNCTIONS = {
     'format': 4,
     'limit': 5
 };
+
 /**
  * Запрос к коллекции
  * @param {Array} collection
@@ -50,6 +51,7 @@ function getCopy(collection) {
 /**
  * Выбор полей
  * @params {...String}
+ * @returns {Function}
  */
 
 exports.select = function () {
@@ -65,16 +67,16 @@ exports.select = function () {
             }
         }
         return collection;
-    }
+    };
   };
 
 /**
  * Фильтрация поля по массиву значений
  * @param {String} property – Свойство для фильтрации
  * @param {Array} values – Доступные значения
+ * @returns {Function}
  */
 exports.filterIn = function (property, values) {
-    //console.info(property, values);
 
     return function filterIn(collection) {
         return collection.filter(function (person) {
@@ -87,15 +89,16 @@ exports.filterIn = function (property, values) {
  * Сортировка коллекции по полю
  * @param {String} property – Свойство для фильтрации
  * @param {String} order – Порядок сортировки (asc - по возрастанию; desc – по убыванию)
+ * @returns {Function}
  */
 exports.sortBy = function (property, order) {
-    //console.info(property, order);
 
     return function sortBy(collection) {
         return collection.sort(function (person1, person2) {
             if (order === 'asc') {
                 return person1[property] > person2[property];
             }
+
             return person2[property] < person1[property];
         });
     };
@@ -105,9 +108,9 @@ exports.sortBy = function (property, order) {
  * Форматирование поля
  * @param {String} property – Свойство для фильтрации
  * @param {Function} formatter – Функция для форматирования
+ * @returns {Function}
  */
 exports.format = function (property, formatter) {
-    //console.info(property, formatter);
 
     return function format(collection) {
         return collection.map(function (person) {
@@ -123,14 +126,14 @@ exports.format = function (property, formatter) {
 /**
  * Ограничение количества элементов в коллекции
  * @param {Number} count – Максимальное количество элементов
+ * @returns {Function}
  */
 exports.limit = function (count) {
-    //console.info(count);
 
     return function limit(collection) {
         return collection.slice(0, count);
-        };
     };
+};
 
 if (exports.isStar) {
 
