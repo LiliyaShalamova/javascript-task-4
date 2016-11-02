@@ -41,11 +41,12 @@ function getCopy(collection) {
     for (var i = 0; i < collection.length; i++) {
         var person = {};
         var fields = Object.keys(collection[i]);
-        for (var field in fields) {
+        for (var field = 0; field < fields.length; field++) {
             person[fields[field]] = collection[i][fields[field]];
         }
         copy.push(person);
     }
+
     return copy;
 }
 /**
@@ -54,21 +55,28 @@ function getCopy(collection) {
  * @returns {Function}
  */
 
+function filterProperty(args, person, collection) {
+    var keys = Object.keys(collection[person]);
+    for (var property = 0; property < keys.length; property++) {
+        if (args.indexOf(keys[property]) === -1) {
+            delete collection[person][keys[property]];
+        }
+    }
+
+    return collection;
+}
+
 exports.select = function () {
     var args = [].slice.call(arguments);
-    
+
     return function select(collection) {
         for (var person = 0; person < collection.length; person++) {
-            var keys = Object.keys(collection[person]);
-            for (var property = 0; property < keys.length; property++) {
-                if (args.indexOf(keys[property]) === -1) {
-                     delete collection[person][keys[property]];
-                 }
-            }
+            collection = filterProperty(args, person, collection);
         }
+
         return collection;
     };
-  };
+};
 
 /**
  * Фильтрация поля по массиву значений
