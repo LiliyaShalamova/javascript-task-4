@@ -49,6 +49,7 @@ function getCopy(collection) {
 
     return copy;
 }
+
 /**
  * Выбор полей
  * @params {...String}
