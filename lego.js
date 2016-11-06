@@ -21,19 +21,19 @@ var PRIORITIES_OF_FUNCTIONS = {
  * @returns {Array}
  */
 exports.query = function (collection) {
-    var copy = getCopy(collection);
+    var result = getCopy(collection);
     if (arguments.length === 1) {
-        return copy;
+        return result;
     }
     var functions = [].slice.call(arguments).slice(1);
     var sortedFunctions = functions.sort(function (func1, func2) {
         return PRIORITIES_OF_FUNCTIONS[func1.name] > PRIORITIES_OF_FUNCTIONS[func2.name] ? 1 : -1;
     });
-    for (var func = 0; func < sortedFunctions.length; func++) {
-        copy = sortedFunctions[func](copy);
-    }
-
-    return copy;
+    sortedFunctions.forEach(function (func) {
+        result = func(result);
+    });
+    
+    return result;
 };
 
 function getCopy(collection) {
@@ -56,26 +56,24 @@ function getCopy(collection) {
  * @returns {Function}
  */
 
-function filterProperty(args, person, collection) {
-    var keys = Object.keys(collection[person]);
+function filterProperty(args, person) {
+    var keys = Object.keys(person);
     for (var property = 0; property < keys.length; property++) {
         if (args.indexOf(keys[property]) === -1) {
-            delete collection[person][keys[property]];
+            delete person[keys[property]];
         }
     }
 
-    return collection;
+    return person;
 }
 
 exports.select = function () {
     var args = [].slice.call(arguments);
 
     return function select(collection) {
-        for (var person = 0; person < collection.length; person++) {
-            collection = filterProperty(args, person, collection);
-        }
-
-        return collection;
+        return collection.map(function (person) {
+            return filterProperty(args, person);
+        });
     };
 };
 
@@ -104,11 +102,14 @@ exports.sortBy = function (property, order) {
 
     return function sortBy(collection) {
         return collection.sort(function (person1, person2) {
+            if (person1[property] === person2[property]) {
+                return 0;
+            }
             if (order === 'asc') {
-                return person1[property] <= person2[property] ? -1 : 1;
+                return person1[property] < person2[property] ? -1 : 1;
             }
 
-            return person1[property] <= person2[property] ? 1 : -1;
+            return person1[property] < person2[property] ? 1 : -1;
         });
     };
 };
