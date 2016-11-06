@@ -58,22 +58,26 @@ function getCopy(collection) {
 
 function filterProperty(args, person) {
     var keys = Object.keys(person);
+    var newPerson = {};
     for (var property = 0; property < keys.length; property++) {
-        if (args.indexOf(keys[property]) === -1) {
-            delete person[keys[property]];
+        if (args.indexOf(keys[property]) !== -1) {
+            newPerson[keys[property]] = person[keys[property]];
         }
     }
 
-    return person;
+    return newPerson;
 }
 
 exports.select = function () {
     var args = [].slice.call(arguments);
 
     return function select(collection) {
-        return collection.map(function (person) {
-            return filterProperty(args, person);
+        var newCollection = [];
+        collection.forEach(function (person) {
+            newCollection.push(filterProperty(args, person));
         });
+        
+        return newCollection;
     };
 };
 
