@@ -76,7 +76,7 @@ exports.select = function () {
         collection.forEach(function (person) {
             newCollection.push(filterProperty(args, person));
         });
-        
+
         return newCollection;
     };
 };
