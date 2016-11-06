@@ -32,7 +32,7 @@ exports.query = function (collection) {
     sortedFunctions.forEach(function (func) {
         result = func(result);
     });
-    
+
     return result;
 };
 
