@@ -21,10 +21,10 @@ var PRIORITIES_OF_FUNCTIONS = {
  * @returns {Array}
  */
 exports.query = function (collection) {
-    var result = getCopy(collection);
     if (arguments.length === 1) {
-        return result;
+        return collection;
     }
+    var result = getCopy(collection);
     var functions = [].slice.call(arguments).slice(1);
     var sortedFunctions = functions.sort(function (func1, func2) {
         return PRIORITIES_OF_FUNCTIONS[func1.name] > PRIORITIES_OF_FUNCTIONS[func2.name] ? 1 : -1;
@@ -37,17 +37,7 @@ exports.query = function (collection) {
 };
 
 function getCopy(collection) {
-    var copy = [];
-    for (var i = 0; i < collection.length; i++) {
-        var person = {};
-        var fields = Object.keys(collection[i]);
-        for (var field = 0; field < fields.length; field++) {
-            person[fields[field]] = collection[i][fields[field]];
-        }
-        copy.push(person);
-    }
-
-    return copy;
+    return JSON.parse(JSON.stringify(collection));
 }
 
 /**
@@ -56,12 +46,12 @@ function getCopy(collection) {
  * @returns {Function}
  */
 
-function filterProperty(args, person) {
+function filterProperty(properties, person) {
     var keys = Object.keys(person);
     var newPerson = {};
-    for (var property = 0; property < keys.length; property++) {
-        if (args.indexOf(keys[property]) !== -1) {
-            newPerson[keys[property]] = person[keys[property]];
+    for (var p = 0; p < properties.length; p++) {
+        if (keys.indexOf(properties[p]) !== -1) {
+            newPerson[properties[p]] = person[properties[p]];
         }
     }
 
@@ -69,12 +59,12 @@ function filterProperty(args, person) {
 }
 
 exports.select = function () {
-    var args = [].slice.call(arguments);
+    var properties = [].slice.call(arguments);
 
     return function select(collection) {
         var newCollection = [];
         collection.forEach(function (person) {
-            newCollection.push(filterProperty(args, person));
+            newCollection.push(filterProperty(properties, person));
         });
 
         return newCollection;
@@ -91,7 +81,7 @@ exports.filterIn = function (property, values) {
 
     return function filterIn(collection) {
         return collection.filter(function (person) {
-            return (values.indexOf(person[property]) !== -1);
+            return values.indexOf(person[property]) !== -1;
         });
     };
 };
